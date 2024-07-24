@@ -14,11 +14,16 @@ ecs = {
     systems_by_event = {},
 
     pool_event = {},
+    counter = {
+        events = 0,
+        system = 0,
+        player_render = 0,
+    },
 
     -- query
     query_data = nil,
     query_types = nil,
-    delta_time = nil,
+    delta_time = 0,
 }
 ecs.__index = ecs
 
@@ -82,11 +87,15 @@ function ecs:register_component(entity, component)
 end
 
 function ecs:add_event(event)
+    self.counter.events = self.counter.events + 1
     table.insert(self.pool_event, event)
 end
 
 function ecs:get_component(entity, c_type)
-    return self.components[entity .. c_type]
+    return {
+        key = entity .. c_type,
+        data = self.components[entity .. c_type]
+    }
 end
 
 function ecs:set_component(entity, c_type, data)
@@ -106,12 +115,17 @@ function ecs:add_system(system)
 end
 
 function ecs:update(dt)
+    if dt then
+        self.delta_time = dt
+    end
+
     while #self.pool_event > 0 do
         local event = table.remove(self.pool_event, 1)
         local to_run = self.systems_by_event[event]
         if to_run ~= nil then
             for i, s in pairs(to_run) do
-                self.systems[s](self, dt)
+                self.counter.system = self.counter.system + 1
+                self.systems[s](self, self.delta_time, event)
             end
         end
     end

@@ -9,8 +9,15 @@ local c_types = utils.make_enum({
     "Item",
     "Health",
     "Name",
+    "Invisible",
+    -- Render
     "Renderable",
-    "Invisible"
+    "Sprite",
+    "Speed",
+    "Grid",
+    "Animation",
+    -- Debug
+    "Debug_Keyboard"
 })
 
 return c_types

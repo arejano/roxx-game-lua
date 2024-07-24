@@ -5,15 +5,15 @@ local events = require 'game.enums.events'
 return {
     events = { events.Keyboard },
     process = function(world, dt)
-        print('keyboard')
         local player = world:query({ c_type.Player })[1]
         local enemy = world:query({ c_type.Enemy })[1]
 
         local player_position = world:get_component(player, c_type.Position)
         local enemy_position = world:get_component(enemy, c_type.Position)
 
-        print(inspect(player_position))
-        print(inspect(enemy_position))
+        if not player_position or not enemy_position then
+            return
+        end
 
         world:set_component(player, c_type.Position, {
             x = player_position.x + 1,
